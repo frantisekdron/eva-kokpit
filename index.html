@@ -898,7 +898,7 @@ try{(function(){
    if(v==='av_und')return !avDecided(r.h);
    return avLevel(r)===v.slice(3);}
  function avPreRender(list,q){ avSync();
-   AVDOP={};var s=avSt();((s&&s.__dopisy)||[]).forEach(function(x){if(x&&(x.id||x.pid))AVDOP[x.id||x.pid]=1;});
+   AVDOP={};var s=avSt();((s&&s.__dopisy)||[]).forEach(function(x){if(x&&!x.del&&(x.id||x.pid))AVDOP[x.id||x.pid]=1;});
    var sk=$('adr_sort')?$('adr_sort').value:'';
    if(q==='av_rk'||q==='av_no'||sk==='pri')list.sort(function(a,b){return (b.pri||0)-(a.pri||0)||String(a.ob).localeCompare(String(b.ob),'cs');});
    else if(sk&&AVHASDET)avDetSort(list,sk);
@@ -994,7 +994,7 @@ try{(function(){
    return out.map(function(r){return String(r.h);});}
  function avAddList(green){ avSync(); var s=avSt(); if(!s)return {add:[],skip:0};
    var have={},adr={},out=[],skip=0;
-   ((s.__dopisy)||[]).forEach(function(x){if(!x)return;if(x.id||x.pid)have[x.id||x.pid]=1;if(x.adresa)adr[avNorm(x.adresa)]=1;});
+   ((s.__dopisy)||[]).forEach(function(x){if(!x||x.del)return;if(x.id||x.pid)have[x.id||x.pid]=1;if(x.adresa)adr[avNorm(x.adresa)]=1;});
    avRows().forEach(function(r){var a=avFinalAdr(r);
      if(!a&&green&&!avGet(r.h)&&avLevel(r)==='ok')a=avPreAdr(r);
      if(!a)return; if(have['adr:'+r.h])return;
@@ -1005,6 +1005,7 @@ try{(function(){
    if(!x.add.length){avToast('Není co přidat — nejdřív něco ověř.');return;}
    if(green&&!confirm('Tyhle adresy nikdo neviděl. Opravdu?'))return;
    s.__dopisy=s.__dopisy||[];
+   s.__dopisy=s.__dopisy.filter(function(y){return !(y&&y.del&&x.add.some(function(it){return y.id==='adr:'+it.r.h;}));});
    x.add.forEach(function(it){ s.__dopisy.push({id:'adr:'+it.r.h,pid:'adr:'+it.r.h,
      name:it.r.n+' · '+it.r.ob,prijemce:'Vážený majiteli nemovitosti',adresa:avFmtPsc(it.a),ts:Date.now(),src:'adresni'}); });
    avSave(); if(window.__kok)window.__kok.renderDopisy();
@@ -1403,7 +1404,8 @@ try{(function(){
    avRenderCard(r); avVaultBar(); try{render(false);}catch(er){}}
  function avOwnerToDopis(r){ var s=avSt(); if(!s)return; var id='adrvl:'+r.h;
    s.__dopisy=s.__dopisy||[];
-   if(s.__dopisy.some(function(x){return x&&(x.id===id||x.pid===id);})){avToast('Tahle nemovitost už ve frontě je.');return;}
+   if(s.__dopisy.some(function(x){return x&&!x.del&&(x.id===id||x.pid===id);})){avToast('Tahle nemovitost už ve frontě je.');return;}
+   s.__dopisy=s.__dopisy.filter(function(x){return !(x&&x.del&&(x.id===id||x.pid===id));});
    if(!avVaultGet(r.h)){avToast('Nejdřív ulož jméno a adresu vlastníka (💾).');return;}
    s.__dopisy.push({id:id,pid:id,h:String(r.h),vl:1,name:r.n+' · '+r.ob,
      prijemce:'👤 vlastník (jen lokálně)',adresa:'',ts:Date.now(),src:'adresni'});  // jméno ani adresa NIKDY do state
@@ -1415,6 +1417,10 @@ try{(function(){
    var v=avVaultGet(h);
    if(v&&(v.jm||v.ad))return {prijemce:avOslov(v.jm),adresa:v.ad||''};
    return {prijemce:'👤 vlastník uložen jen u Evy — pošle zálohou/e-mailem',adresa:''};}
+ // Odkazy pro jiné části kokpitu (fronta dopisů) — ať Eva nemusí hledat inzerát a katastr jinde.
+ function avLinks(any){ var h=String(any||'').replace(/^adrvl:/,'').replace(/^adr:/,'');
+   var r=AVROW[h]; if(!r)return null; var k=avKatAny(r);
+   return {u:r.u, kat:k.u, katEx:!!k.ex, katT:k.t, n:r.n};}
  function avVaultBar(){ var bar=$('av_bar'); if(!bar)return;
    var old=bar.querySelector('.av-vault-bar'); if(old)old.parentNode.removeChild(old);
    var n=avVaultCount(); if(!n)return;
@@ -1479,7 +1485,7 @@ try{(function(){
    window.addEventListener('pagehide',function(){try{avEmit();}catch(er){}});
    window.__avRerender=function(){try{render(false);}catch(er){}};
    window.__av={open:avOpen,decide:avDecide,counts:avCounts,queue:avQueue,get:avGet,finalAdr:avFinalAdr,
-     dopisAdresat:avDopisAdresat,vault:avVaultLoad,vaultSet:avVaultSet,vaultPurge:avVaultPurge,
+     dopisAdresat:avDopisAdresat,links:avLinks,vault:avVaultLoad,vaultSet:avVaultSet,vaultPurge:avVaultPurge,
      oslovit:avToggleOslovit,det:avD,rk:function(){return AVRKS;},
      addToDopisy:avAddToDopisy,undo:avUndo,close:avClose,next:avNext,prev:avPrev,cur:function(){return AVS;},q:function(){return AVQ;}};}
 
@@ -2005,25 +2011,25 @@ var STAGES=[{"k": "zkontrolovat", "l": "Zkontrolovat vizu", "c": "#e0a020"}, {"k
        else{ah.className='adrhint warn';ah.textContent='⚠️ Chybí číslo popisné nebo PSČ — takhle pošta nedoručí.';}};
      ai.addEventListener('input',function(){
        state.__adresy[pid]=ai.value.trim();
-       var q=(state.__dopisy||[]).find(function(x){return x.pid===pid;});
+       var q=dopLive().find(function(x){return x.pid===pid;});
        if(q)q.adresa=ai.value.trim();
        save();prekont();renderDopisy();
        clearTimeout(window._at);window._at=setTimeout(function(){
          if(ai.value.trim())udalost('adresa',card.querySelector('.nm').textContent+': '+ai.value.trim());},4000);
-       if(typeof ab!=='undefined')ab.textContent=(state.__dopisy||[]).some(function(x){return x.pid===pid;})
+       if(typeof ab!=='undefined')ab.textContent=dopLive().some(function(x){return x.pid===pid;})
          ?'✓ Ve frontě dopisů — odebrat'
          :(efektAdr()?'📮 Zařadit do fronty dopisů':'📮 Zařadit do fronty (adresu doplním později)');});
      prekont();
      ds.appendChild(ai);ds.appendChild(ah);
      // — akce: zařadit do fronty dopisů —
-     var vfr=(state.__dopisy||[]).some(function(x){return x.pid===pid;});
+     var vfr=dopLive().some(function(x){return x.pid===pid;});
      ab=document.createElement('button');ab.className='dbtn mail';ab.style.marginTop='10px';
      ab.textContent=vfr?'✓ Ve frontě dopisů — odebrat'
         :(efektAdr()?'📮 Zařadit do fronty dopisů':'📮 Zařadit do fronty (adresu doplním později)');
      ab.addEventListener('click',function(){
-       var i=(state.__dopisy||[]).findIndex(function(x){return x.pid===pid;});
-       if(i>=0){state.__dopisy.splice(i,1);}
-       else{state.__dopisy.push({pid:pid,name:card.querySelector('.nm').textContent,
+       var i=dopLive().findIndex(function(x){return x.pid===pid;});
+       if(i>=0){dopDrop(pid);}
+       else{state.__dopisy.push({id:pid,pid:pid,name:card.querySelector('.nm').textContent,
               prijemce:dopis.prijemce||'Vážený majiteli nemovitosti',adresa:efektAdr(),ts:Date.now()});}
        save();renderDopisy();
        udalost('dopis',(i>=0?'odebrano z fronty: ':'zarazeno do fronty: ')+card.querySelector('.nm').textContent);
@@ -2460,12 +2466,20 @@ var STAGES=[{"k": "zkontrolovat", "l": "Zkontrolovat vizu", "c": "#e0a020"}, {"k
  function dopAdresat(x){ // u položek s vlastníkem (vl:1) doplní jméno+adresu z lokálního trezoru (nikdy ze state)
    try{ if(x&&x.vl&&window.__av&&window.__av.dopisAdresat)return window.__av.dopisAdresat(x); }catch(e){}
    return {prijemce:(x&&x.prijemce)||'',adresa:(x&&x.adresa)||''}; }
- function dopText(){var ds=state.__dopisy||[];
+ // Fronta dopisů se mezi zařízeními slučuje podle id (unionById tady i v Apps Scriptu),
+ // takže prosté smazání se při dalším stažení vrátí zpátky. Mažeme proto náhrobkem:
+ // položka zůstane s del:1 a novým ts (vyhraje v unionu) a všude se přeskakuje.
+ function dopLive(){return (state.__dopisy||[]).filter(function(x){return x&&!x.del;});}
+ function dopDrop(pid){var hit=0;
+   (state.__dopisy||[]).forEach(function(x){ if(!x||x.del)return;
+     if(x.pid===pid||x.id===pid){x.del=1;x.ts=Date.now();if(!x.id)x.id=x.pid;hit++;} });
+   return hit;}
+ function dopText(){var ds=dopLive();
    return 'Fronta dopisů — Evičky kokpit ('+new Date().toLocaleDateString('cs-CZ')+'):\n\n'
      +ds.map(function(x,i){var a=dopAdresat(x);return (i+1)+'. '+x.name+'\n   → '+a.prijemce+', '+(a.adresa||'⚠️ ADRESA CHYBÍ');}).join('\n')
      +'\n\nCelkem '+ds.length+' dopisů, odhad '+(ds.length*79)+' Kč.';}
  function renderDopisy(){
-   var ds=state.__dopisy||[],wrap=document.getElementById('doplist');
+   var ds=dopLive(),wrap=document.getElementById('doplist');
    var b=document.getElementById('dopbadge');if(b)b.textContent=ds.length?('('+ds.length+')'):'';
    if(!wrap)return;
    if(!ds.length){wrap.innerHTML='<div class="dopempty">Fronta je prázdná. Otevři nemovitost a klikni na <b>📮 Zařadit do fronty dopisů</b>.</div>';}
@@ -2475,8 +2489,11 @@ var STAGES=[{"k": "zkontrolovat", "l": "Zkontrolovat vizu", "c": "#e0a020"}, {"k
        var _a=dopAdresat(x);
        d.innerHTML='<button class="ddel" title="Odebrat">×</button><div class="dn">'+escj(x.name)+'</div>'
          +'<div class="da">'+escj(_a.prijemce)+' · '+(_a.adresa?escj(_a.adresa):'<b style="color:#c01d2c">⚠️ adresa chybí — pošta nedoručí</b>')+'</div>';
+       var _lk=(window.__av&&window.__av.links)?window.__av.links(x.h||x.id||x.pid):null;
+       if(_lk)d.innerHTML+='<div class="av-go"><a class="av-gobtn inz" href="'+escj(_lk.u)+'" target="_blank" rel="noopener">🏠 Inzerát ↗</a>'
+         +'<a class="av-gobtn kat'+(_lk.katEx?'':' vague')+'" href="'+escj(_lk.kat)+'" target="_blank" rel="noopener" title="'+escj(_lk.katT)+'">🔗 Katastr'+(_lk.katEx?' ↗':' (najít) ↗')+'</a></div>';
        d.querySelector('.ddel').addEventListener('click',function(){
-         state.__dopisy=state.__dopisy.filter(function(y){return y.pid!==x.pid;});save();renderDopisy();});
+         dopDrop(x.pid||x.id);save();renderDopisy();});
        wrap.appendChild(d);});}
    var inf=document.getElementById('dopinfo');
    if(inf)inf.innerHTML='<b>Jak to funguje:</b> kokpit je statická stránka bez serveru, takže dopisy '
@@ -2499,10 +2516,10 @@ var STAGES=[{"k": "zkontrolovat", "l": "Zkontrolovat vizu", "c": "#e0a020"}, {"k
    ml.href=mailtoUrl('Fronta dopisů — Ing. Eva Goldšmíd', dopText());
    ml.textContent='✉ Otevřít e-mail znovu';mbdy.appendChild(ml);
    document.getElementById('mailmodal').classList.add('open');
-   udalost('dopis','ODESLANA FRONTA: '+(state.__dopisy||[]).length+' dopisu');}
+   udalost('dopis','ODESLANA FRONTA: '+dopLive().length+' dopisu');}
  var _dsend=document.getElementById('dopsend');
  if(_dsend)_dsend.addEventListener('click',function(){
-   if(!(state.__dopisy||[]).length){alert('Fronta dopisů je prázdná, Evičko 🙂');return;}
+   if(!dopLive().length){alert('Fronta dopisů je prázdná, Evičko 🙂');return;}
    otevriMail('Fronta dopisů — Ing. Eva Goldšmíd', dopText()); dopModal();});
  var _dcopy=document.getElementById('dopcopy');
  if(_dcopy)_dcopy.addEventListener('click',function(){var b=this,t=dopText();
