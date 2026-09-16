@@ -237,7 +237,8 @@ body.dark .tab{background:#13233a;border-color:#24364f;color:#9fb2c8}
 .adrtbl td{padding:8px 10px;border-bottom:1px solid #eef2f7;vertical-align:top;color:#22344c}
 .adrtbl tr:hover td{background:#f7faff}
 .adrtbl .an{font-weight:700;color:#0c2749;min-width:190px}
-.adrtbl .al{display:inline-block;margin-top:3px;font-size:11.5px;font-weight:800;color:#2f4bd0;text-decoration:none}
+.adrtbl .al{display:inline-flex;align-items:center;gap:4px;margin:3px 4px 0 0;padding:5px 9px;min-height:28px;font-size:11.5px;font-weight:800;color:#fff;background:#2f4bd0;border-radius:8px;text-decoration:none}
+.adrtbl .al:hover{background:#2439a8}
 .adrtbl .ab2{display:inline-block;font-size:10px;font-weight:700;border-radius:8px;padding:1px 6px;margin:3px 4px 0 0;background:#eef2f7;color:#37475d}
 .adrtbl .prc{white-space:nowrap;font-weight:800}
 .aq{display:inline-block;font-size:10.5px;font-weight:800;border-radius:8px;padding:1px 7px;margin:0 4px 2px 0;white-space:nowrap}
@@ -249,7 +250,7 @@ body.dark .adrtbl th{background:#0f1d31;color:#9fb2c8;border-color:#24364f}
 body.dark .adrtbl td{color:#dfe8f4;border-color:#1e3048}
 body.dark .adrtbl tr:hover td{background:#182b45}
 body.dark .adrtbl .an,body.dark .adrcount{color:#eaf1fa}
-body.dark .adrtbl .al{color:#8fb0ff}
+body.dark .adrtbl .al{color:#fff;background:#3f5fe0}
 body.dark .adrtbl .ab2,body.dark .aq.gray{background:#1b2c45;color:#b5c4d6}
 body.dark .adrlegend{color:#9fb2c8}
 body.dark .noteprev{background:#2a2410;border-color:#4d4120;color:#e3cf8f}
@@ -481,6 +482,19 @@ tr.av-dim td{opacity:.55}
 #vtoast.av-toast{z-index:130}
 /* obohacená data (adresni_detaily.json) */
 .av-pricol{width:74px;text-align:center}
+.av-go{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.av-gobtn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border:0;border-radius:10px;
+ font:800 13.5px/1 inherit;font-family:inherit;color:#fff;background:#2f4bd0;text-decoration:none;cursor:pointer}
+.av-gobtn:hover{filter:brightness(1.08)}
+.av-gobtn.kat{color:#5b3d00;background:#ffd98a}
+.av-gobtn.sv{color:#12233b;background:#e6ecf5}
+.av-gobtn.star{color:#5b3d00;background:#fff3d6;box-shadow:inset 0 0 0 2px #f0c674}
+.av-gobtn.star.on{color:#fff;background:#e0a300;box-shadow:none}
+body.dark .av-gobtn.sv{color:#e8eefc;background:#2a3a55}
+.av-kat{display:inline-flex;align-items:center;gap:4px;margin:3px 4px 0 0;padding:5px 9px;min-height:28px;font-size:11.5px;font-weight:800;color:#5b3d00;background:#ffd98a;border-radius:8px;text-decoration:none;white-space:nowrap}
+.av-kat:hover{background:#ffcc5f}
+body.dark .av-kat{color:#2a1c00;background:#e8bf6a}
+.av-kat.vague,.av-gobtn.kat.vague{color:#6b5a3a;background:#f2e7cf}
 .adrtbl.nodet .av-pricol{display:none}
 .av-sc{display:inline-block;min-width:34px;font-size:12.5px;font-weight:800;border-radius:9px;padding:3px 7px;background:#eef2f7;color:#37475d;cursor:help}
 .av-sc.hot{background:#fdecee;color:#c01d2c}
@@ -764,7 +778,8 @@ try{(function(){
    return '<tr'+rowattr+'><td class="av-pricol">'+(typeof avPriCell==='function'?avPriCell(r):'')+'</td>'
      +'<td class="an">'+e(r.n)+'<br><span class="ab2">'+e(r.s||r.t)+'</span><span class="ab2">'+(r.o==='pronajem'?'pronájem':'prodej')+'</span><br>'
      +(typeof avDetBadges==='function'?avDetBadges(r):'')
-     +'<a class="al" href="'+e(r.u)+'" target="_blank" rel="noopener">Inzerát ↗</a>'
+     +'<a class="al" href="'+e(r.u)+'" target="_blank" rel="noopener">🏠 Inzerát ↗</a>'
+     +(typeof avKatCell==='function'?avKatCell(r):'')
      +(typeof avKontakt==='function'?avKontakt(r):'')+'</td>'
      +'<td class="prc">'+kc(r.c)+'</td>'
      +'<td>'+e(r.ob)+'<br><span style="color:#8a97a8;font-size:11px">okres '+e(r.ok)+'</span></td>'
@@ -786,7 +801,7 @@ try{(function(){
  function csv(){
    var AV=typeof avCsvCols==='function';
    var H=['Typ','Podtyp','Nabídka','Cena Kč','Okres','Obec','Kdo inzeruje','Adresa nemovitosti','Kvalita adresy','Parcela','Název inzerátu','Odkaz']
-     .concat(AV?['Stav ověření','Adresa pro dopis','PSČ','Ověřil','Datum ověření','Automat (úroveň)','Skóre','Důvody','GPS']:[])
+     .concat(AV?['Stav ověření','Adresa pro dopis','PSČ','Ověřil','Datum ověření','Automat (úroveň)','Skóre','Důvody','GPS','Katastr (Nahlížení)']:[])
      .concat(typeof avDetCsvHead==='function'?avDetCsvHead():[]);
    var L=[H].concat(filtered.map(function(r){return [r.t,r.s,r.o,r.c||'',r.ok,r.ob,r.k,r.a,(r.t==='pozemek'?'pozemek – bez schránky':(QL[r.q]||[0,r.q])[1]),r.p,r.n,r.u].concat(AV?avCsvCols(r):[]).concat(typeof avDetCsvCols==='function'?avDetCsvCols(r):[]);}));
    var txt='﻿'+L.map(function(a){return a.map(function(x){x=String(x==null?'':x);return /[";\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x;}).join(';');}).join('\r\n');
@@ -891,10 +906,25 @@ try{(function(){
  function avReadyCount(list){var seen={},n=0;
    (list||[]).forEach(function(r){var a=avFinalAdr(r);if(!a)return;var k=avNorm(a);if(seen[k])return;seen[k]=1;n++;});
    return n;}
+ // Odkaz do Nahlížení do KN na TU konkrétní parcelu/budovu. Stejná logika jako v Excelu:
+ // u domu má přednost budova (č.p.), u pozemku parcela. Bez ID odkaz nevykreslujeme vůbec.
+ function avKatUrl(r){ var ib=(r.b&&r.b.ib)!=null?String(r.b.ib).replace(/\.0$/,''):'';
+   if(r.t==='dum'&&ib)return {u:AV_NAHL+'ZobrazObjekt.aspx?typ=budova&id='+ib, t:'budova č.p. '+((r.b&&r.b.cd)||'?')};
+   var pid=(r.pa&&r.pa.id!=null)?String(r.pa.id).replace(/\.0$/,''):'';
+   if(pid)return {u:AV_NAHL+'ZobrazObjekt.aspx?typ=parcela&id='+pid, t:(r.pa.st===1?'st. ':'p. č. ')+(r.pa.n||pid)+(r.pa.ku?', k. ú. '+r.pa.ku:'')};
+   if(ib)return {u:AV_NAHL+'ZobrazObjekt.aspx?typ=budova&id='+ib, t:'budova č.p. '+((r.b&&r.b.cd)||'?')};
+   return null;}
+ // Bez ID parcely/budovy odkaz nemíří na konkrétní objekt — otevřeme Nahlížení a řekneme,
+ // co si tam Eva zadá. Radši viditelné tlačítko s poctivým popiskem než prázdné místo.
+ function avKatAny(r){ var k=avKatUrl(r); if(k)return {u:k.u,t:k.t,ex:1};
+   return {u:AV_NAHL, t:'v datech není parcela — v Nahlížení zadej obec '+(r.ob||'')+(r.a?' a adresu '+r.a:''), ex:0};}
+ function avKatCell(r){ var k=avKatAny(r);
+   return '<a class="av-kat'+(k.ex?'':' vague')+'" target="_blank" rel="noopener" href="'+e(k.u)+'" title="'+(k.ex?('Otevře v Nahlížení do KN přímo '+e(k.t)+' — vlastníka uvidíš po přihlášení identitou'):e(k.t))+'">🔗 Katastr'+(k.ex?' ↗':' (najít) ↗')+'</a>';}
  function avCsvCols(r){var g=avAny(r.h),fin=avFinalAdr(r),psc=(fin.match(/(\d{3})\s?(\d{2})(?!\d)/)||[]);
    return [ (g&&AV_DEC[g.v])?AV_DEC[g.v][1]:'', fin?avFmtPsc(fin):'', psc.length?(psc[1]+' '+psc[2]):'',
      g?(g.by||''):'', g?avFmtDate(g.ts):'', AV_LVL[avLevel(r)][1], (r.sk!=null?r.sk:''),
-     avReasons(r).join(' | '), (r.la!=null&&r.lo!=null)?(r.la+','+r.lo):'' ];}
+     avReasons(r).join(' | '), (r.la!=null&&r.lo!=null)?(r.la+','+r.lo):'',
+     (avKatUrl(r)||{}).u||'' ];}
  // ——— obohacená data (WP2c) ———
  function avD(h){return AVDET[String(h)]||null;}
  function avMon(ag){var m=Math.round(ag/30.4);return (m<1)?(ag+' dní'):(m+' měsíců');}
@@ -1064,9 +1094,11 @@ try{(function(){
      +'<button class="av-x" id="av_close" type="button" title="Zavřít (Esc)">✕</button></div>'
      +'<div class="av-body">'
      +'<div class="av-title">'+e(r.n)+(r.c?' · '+e(kc(r.c)):'')+'</div>'
-     +'<div class="av-sub">'+e(r.ob)+' · '+e(r.k)+' · <a href="'+e(r.u)+'" target="_blank" rel="noopener">Inzerát ↗</a>'
-     +' · <button class="av-lnk" id="av_sv" type="button">👁 Street View<span class="av-kbd"> (S)</span></button>'
-     +' · <button class="av-star'+((g&&g.o)?' on':'')+'" id="av_star" type="button" data-star="'+e(r.h)+'">⭐ Oslovit</button></div>';
+     +'<div class="av-sub">'+e(r.ob)+' · '+e(r.k)+'</div>'
+     +'<div class="av-go"><a class="av-gobtn inz" href="'+e(r.u)+'" target="_blank" rel="noopener">🏠 Otevřít inzerát ↗</a>'
+     +'<a class="av-gobtn kat'+(avKatAny(r).ex?'':' vague')+'" href="'+e(avKatAny(r).u)+'" target="_blank" rel="noopener" title="'+e(avKatAny(r).t)+'">🔗 Katastr'+(avKatAny(r).ex?' ↗':' (najít) ↗')+'</a>'
+     +'<button class="av-gobtn sv" id="av_sv" type="button">👁 Street View<span class="av-kbd"> (S)</span></button>'
+     +'<button class="av-gobtn star'+((g&&g.o)?' on':'')+'" id="av_star" type="button" data-star="'+e(r.h)+'">⭐ Oslovit</button></div>';
    var _dt=avTags(r),_kon=avKontakt(r),_dd=avD(r.h);
    if(_dt.length||_kon||_dd)h+='<div class="av-det">'+((_dd&&_dd.sc!=null)?'<span class="av-sc '+avScCls(_dd.sc)+'" title="'+e((_dd.sr||[]).join(' · '))+'">skóre '+e(_dd.sc)+'</span> ':'')
      +_dt.join('')+_kon+'</div>';
