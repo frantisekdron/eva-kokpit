@@ -483,6 +483,36 @@ tr.av-dim td{opacity:.55}
 /* obohacená data (adresni_detaily.json) */
 .av-pricol{width:74px;text-align:center}
 .av-go{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.av-go.sm{gap:6px;margin:5px 0 0}
+.av-go.sm .av-gobtn{min-height:28px;padding:0 9px;font-size:11.5px;border-radius:8px}
+.av-btn-own{display:inline-flex;align-items:center;min-height:40px;padding:0 16px;margin-left:8px;border:0;border-radius:10px;
+ font:800 13.5px/1 inherit;font-family:inherit;color:#5b3d00;background:#ffd98a;cursor:pointer}
+.av-btn-own[disabled]{opacity:.45;cursor:default}
+.av-ownctx{margin:8px 0 2px;font-size:12px;color:#6b7785}
+.av-ownform{margin-top:10px;display:flex;flex-direction:column;gap:4px}
+.av-ownform label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:#0c2749;margin-top:6px}
+.av-ownform label span{font-weight:600;text-transform:none;letter-spacing:0;color:#8a97a8}
+.av-ownform input{width:100%;min-height:42px;padding:9px 11px;border:1.5px solid #dde4ec;border-radius:9px;font:600 14px inherit;font-family:inherit;background:#fff;color:#12233b}
+.av-ownform input:focus{outline:0;border-color:#2f4bd0}
+.av-ownlock{margin-top:10px;font-size:11.5px;color:#6b7785;background:#f4f7fb;border-radius:8px;padding:8px 10px}
+.av-hot{margin:0 0 12px}
+.av-hotbox{background:#fff;border:1px solid #dde4ec;border-radius:12px;overflow:hidden}
+.av-hotbox>summary{cursor:pointer;padding:11px 14px;font-weight:800;font-size:13.5px;color:#0c2749;background:#eaf6ee}
+.av-hotacts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;border-bottom:1px solid #eef2f7}
+.av-hnote{font-size:11px;color:#8a97a8}
+.av-hotwrap{overflow-x:auto}
+.av-hottbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.av-hottbl th{background:#f4f7fb;color:#6b7785;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:7px 10px;white-space:nowrap}
+.av-hottbl td{padding:9px 10px;border-top:1px solid #eef2f7;vertical-align:top}
+.av-hsub{color:#8a97a8;font-size:11.5px}
+.av-hbtn{border:1px solid #dde4ec;background:#fff;border-radius:8px;min-width:32px;min-height:32px;cursor:pointer;margin-right:4px;font-size:13px}
+body.dark .av-hotbox{background:#132133;border-color:#2e4260}
+body.dark .av-hotbox>summary{background:#16321f;color:#e8eefc}
+body.dark .av-hottbl th{background:#1b2c45;color:#b5c4d6}
+body.dark .av-hottbl td{border-color:#24354f}
+body.dark .av-ownform input{background:#0f1b2b;border-color:#2e4260;color:#e8eefc}
+body.dark .av-ownlock{background:#16243a}
+body.dark .av-hbtn{background:#1b2c45;border-color:#2e4260;color:#e8eefc}
 .av-gobtn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border:0;border-radius:10px;
  font:800 13.5px/1 inherit;font-family:inherit;color:#fff;background:#2f4bd0;text-decoration:none;cursor:pointer}
 .av-gobtn:hover{filter:brightness(1.08)}
@@ -708,6 +738,7 @@ body.dark .av-vault-bar{color:#9fb2c8;border-color:#24364f}
 <p><b>Jméno vlastníka tu není</b> — katastr je od 30. 12. 2025 pro dohledávání vlastníků neveřejný (jen s ověřenou identitou) a inzerát jméno neuvádí. Dopis proto jde jako <b>„Vážený majiteli nemovitosti“</b> na adresu nemovitosti. U pozemku adresa k dopisu nestačí (není tam schránka).</p>
 <div class="adrlegend" id="adr_legend"><span class="aq ok">✓ z inzerátu</span> adresu uvádí sám inzerát &nbsp;·&nbsp; <span class="aq ok">✓ RÚIAN</span> úřední adresa do 25 m od polohy &nbsp;·&nbsp; <span class="aq warn">⚠ ověřit</span> 25–60 m od polohy &nbsp;·&nbsp; <span class="aq gray">jen ulice / obec</span> poloha v inzerátu je záměrně rozmazaná</div></div>
 <div class="av-bar" id="av_bar" style="display:none"></div>
+<div class="av-hot" id="av_hot" style="display:none"></div>
 <div class="bar"><div class="frow">
 <select class="fsel" id="adr_davka"></select>
 <select class="fsel" id="adr_okres"><option value="">všechny okresy</option></select>
@@ -848,6 +879,7 @@ try{(function(){
  var AV_INSTL=/^(sekretariat|podatelna|info|office|urad|admin|kancelar|reality|prodej|obchod)$/i;
  var AV_INSTN=/(s\.r\.o|a\.s\.|spol\.|z\.s\.|družstv|Město|Obec |Obec$|s\. r\. o)/i;
  var AVROW={__cur:-1},AVDG={},AVHASV=false,AVDOP={},AVQ={mode:false,list:[],i:0},AVS=null,AVUNDO=[];
+ var AVHOTOPEN=false;   // zůstane rozbalený ověřený seznam mezi překreslením
  var AVE={n:0,ok:0,fix:0,no:0},avMap=null,avLG=null,avOrto=null,avKN=null,avLeaf=0,avLeafCbs=[],avModalEl=null;
  function avRows(){return (D[cur]&&D[cur].rows)||[];}
  function avSt(){return window.__kok?window.__kok.st():null;}
@@ -884,7 +916,7 @@ try{(function(){
    return '<span class="av-badge" data-v="'+v+'" data-h="'+e(r.h)+'" title="Otevřít ověření adresy">'+e(t)+'</span>'
      +(avInDop(r.h)?'<span class="av-badge" data-v="dop">📮 ve frontě</span>':'')
      +((g&&g.vl)?'<span class="av-badge" data-v="vl">👤 vlastník</span>':'')
-     +'<span class="av-star'+((g&&g.o)?' on':'')+'" data-star="'+e(r.h)+'" title="Označit k oslovení (otevře krok „Najít vlastníka“)">⭐</span>';}
+     +'<span class="av-star'+((g&&g.o)?' on':'')+'" data-star="'+e(r.h)+'" title="Přidat do mého výběru — pak v „👤 Sbírat vlastníky“ doplníš jméno a trvalou adresu">⭐</span>';}
  function avAdrCell(r){var fin=avFinalAdr(r),base=r.a||'';
    if(fin){var h='<b>'+e(avFmtPsc(fin))+'</b>';
      if(base&&avNorm(fin)!==avNorm(base))h+='<br><span class="av-why">inzerát: '+e(base)+'</span>';
@@ -983,6 +1015,10 @@ try{(function(){
      if(!avDecided(r.h)&&!avDupDone(r)){ if(lv==='rk'||lv==='no')q++; else if(lv==='ok')gr++; }});
    return {c:c,d:d,q:q,gr:gr};}
  function avQueue(mode){ avSync(); var out=[],seen={};
+   // 'own' = sběr vlastníků: projde jen to, co si Evička dala do výběru (⭐) a ještě nemá hotovo.
+   if(mode==='own'){ var l=avRows().filter(function(r){var g=avAny(r.h);return g&&g.o&&!g.hot;});
+     l.sort(function(a,b){return (b.pri||0)-(a.pri||0)||String(a.ob).localeCompare(String(b.ob),'cs');});
+     return l.map(function(r){return String(r.h);}); }
    avRows().forEach(function(r){var lv=avLevel(r);
      if(mode==='check'&&!(lv==='rk'||lv==='no'))return;
      if(mode==='green'&&lv!=='ok')return;
@@ -1019,6 +1055,8 @@ try{(function(){
    var d1=avAddList(false),d2=avAddList(true);
    bar.innerHTML='<div class="av-chips">'+chips+'</div>'
      +'<button class="av-btn-go" id="av_go"'+(x.q?'':' disabled')+'>▶ Ověřovat ('+x.q+')</button>'
+     +(function(){var n=avQueue('own').length,m=avHotList().length;
+       return (n||m)?('<button class="av-btn-own" id="av_own"'+(n?'':' disabled')+'>👤 Sbírat vlastníky ('+n+')</button>'):'';})()
      +'<button class="av-lnk" id="av_green">Rychlý průlet zelených ('+x.gr+')</button>'
      +'<button class="av-lnk av-dop" id="av_dopbtn">📮 Přidat ověřené do fronty dopisů ('+d1.add.length+')</button>'
      +(d2.add.length>d1.add.length?'<button class="av-lnk" id="av_dopg">přidat i 🟢 nezkontrolované ('+d2.add.length+')</button>':'')
@@ -1028,10 +1066,12 @@ try{(function(){
    bar.querySelectorAll('.av-chip').forEach(function(b){b.addEventListener('click',function(){
      var f=b.getAttribute('data-f');$('adr_q').value=($('adr_q').value===f?'':f);render(true);});});
    var g=$('av_go');if(g)g.addEventListener('click',function(){avOpen(null,'check');});
+   var ow=$('av_own');if(ow)ow.addEventListener('click',function(){avOpen(null,'own');});
    var gr=$('av_green');if(gr)gr.addEventListener('click',function(){avOpen(null,'green');});
    var db=$('av_dopbtn');if(db)db.addEventListener('click',function(){avAddToDopisy(false);});
    var dg=$('av_dopg');if(dg)dg.addEventListener('click',function(){avAddToDopisy(true);});
-   if(typeof avVaultBar==='function')avVaultBar();}   // lišta trezoru se překresluje spolu s barem
+   if(typeof avVaultBar==='function')avVaultBar();
+   if(typeof avHotPaint==='function')avHotPaint();}   // trezor + ověřený seznam se překreslují spolu s lištou
  // ——— modal ———
  function avEnsureModal(){ if(avModalEl)return avModalEl;
    var m=document.createElement('div');m.className='modal-bg';m.id='avmodal';
@@ -1084,7 +1124,58 @@ try{(function(){
  function avEta(){ var n=Math.max(0,AVQ.list.length-AVQ.i),s=0;
    for(var i=AVQ.i;i<AVQ.list.length;i++){var r=AVROW[AVQ.list[i]];s+=AV_SEC[r?avLevel(r):'rk']||8;}
    if(!n)return ''; var m=Math.round(s/60); return m<1?'~ pod minutu':('~'+m+' min zbývá');}
+ // ——— sběr vlastníků: jedna nemovitost = tři odkazy a jedno pole ———
+ // Evička kliká jen Inzerát / Street View / Katastr a opíše jméno — nic víc na téhle kartě není.
+ function avOwnCard(r){ var c=$('av-card'); if(!c)return;
+   var vl=avVaultGet(r.h)||{},tot=AVQ.list.length,k=avKatAny(r);
+   var h='<div class="av-head"><div class="av-pos">['+(AVQ.i+1)+' / '+tot+']</div>'
+     +'<div class="av-pbar"><i style="width:'+(tot?Math.round(AVQ.i/tot*100):0)+'%"></i></div>'
+     +'<div class="av-eta">👤 sběr vlastníků</div>'
+     +'<button class="av-undo-h" id="av_undo_h" type="button" title="Zpět (Backspace)">↶</button>'
+     +'<button class="av-x" id="av_close" type="button" title="Zavřít (Esc)">✕</button></div>'
+     +'<div class="av-body">'
+     +'<div class="av-title">'+e(r.n)+(r.c?' · '+e(kc(r.c)):'')+'</div>'
+     +'<div class="av-sub">'+e(r.ob)+' · okres '+e(r.ok)+' · '+e(r.k)+'</div>'
+     +'<div class="av-go"><a class="av-gobtn inz" href="'+e(r.u)+'" target="_blank" rel="noopener">🏠 Inzerát ↗</a>'
+     +'<button class="av-gobtn sv" id="av_sv" type="button">👁 Street View<span class="av-kbd"> (S)</span></button>'
+     +'<a class="av-gobtn kat'+(k.ex?'':' vague')+'" href="'+e(k.u)+'" target="_blank" rel="noopener" title="'+e(k.t)+'">🔗 Katastr'+(k.ex?' ↗':' (najít) ↗')+'</a></div>'
+     +'<div class="av-ownctx">'+(r.a?('📍 '+e(avFmtPsc(r.a))):'📍 adresa nemovitosti není')
+     +(r.p?' · '+e(r.p):'')
+     +((r.pa&&r.pa.ku)?' <button class="av-copy" data-cp="'+e(r.pa.ku)+'">📋 k. ú.</button>':'')+'</div>'
+     +'<div class="av-ownform">'
+     +'<label>Jméno vlastníka <span>(z katastru — jen jméno a příjmení / firma)</span></label>'
+     +'<input id="av_o_jm" autocomplete="off" placeholder="např. Jana Nováková" value="'+e(vl.jm||'')+'">'
+     +'<label>Trvalá adresa vlastníka <span>(tam půjde dopis)</span></label>'
+     +'<input id="av_o_ad" autocomplete="off" placeholder="např. Nerudova 211, 431 01 Spořice" value="'+e(vl.ad||'')+'">'
+     +'<input id="av_o_od" autocomplete="off" placeholder="odkaz navíc (volitelné) — např. výpis z KN, firma v justici" value="'+e(vl.od||'')+'">'
+     +'</div>'
+     +'<div class="av-ownlock">🔒 Jméno a adresa zůstávají jen v tomhle prohlížeči — do cloudu se neposílají. Do ověřeného seznamu je dostaneš tlačítkem dole, ven přes ⬇ CSV nebo ✉️.</div>'
+     +'</div>'
+     +'<div class="av-actions"><button class="av-btn ok" id="av_o_save" type="button" style="flex:2 1 0">✅ Uložit a další<span class="av-kbd">Enter</span></button>'
+     +'<button class="av-btn" id="av_o_skip" type="button">⏭ Přeskočit</button>'
+     +'<button class="av-btn" id="av_o_undo" type="button">↶ Zpět</button></div>';
+   c.innerHTML=h;
+   var cl=$('av_close'); if(cl)cl.addEventListener('click',avClose);
+   var uh=$('av_undo_h'); if(uh)uh.addEventListener('click',avUndo);
+   var sv=$('av_sv'); if(sv)sv.addEventListener('click',avStreetView);
+   var sb=$('av_o_save'); if(sb)sb.addEventListener('click',function(){avOwnSave(r);});
+   var sk=$('av_o_skip'); if(sk)sk.addEventListener('click',avNext);
+   var ub=$('av_o_undo'); if(ub)ub.addEventListener('click',avUndo);
+   c.querySelectorAll('.av-copy').forEach(function(b){b.addEventListener('click',function(ev){ev.preventDefault();
+     var t=b.getAttribute('data-cp')||'',ot=b.textContent;
+     function ok(){b.textContent='✓';setTimeout(function(){b.textContent=ot;},1200);}
+     if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,ok); else ok();});});
+   var jm=$('av_o_jm'); if(jm)setTimeout(function(){try{jm.focus();}catch(er){}},60);}
+ function avOwnSave(r){ var jm=($('av_o_jm')||{}).value||'',ad=($('av_o_ad')||{}).value||'',od=($('av_o_od')||{}).value||'';
+   if(!jm.trim()&&!ad.trim()){avToast('Napiš aspoň jméno nebo trvalou adresu — jinak není co uložit.');return;}
+   avVaultSet(r.h,{jm:jm.trim(),ad:ad.trim(),od:od.trim(),ts:Date.now()});
+   avFlag(r.h,'vl',1); avFlag(r.h,'hot',1);
+   if(window.__kok)window.__kok.udalost('adr','OVERENY SEZNAM: +1 (celkem '+avHotList().length+')');  // jen počty, nikdy jméno
+   avToast('✅ v ověřeném seznamu ('+avHotList().length+')');
+   avVaultBar(); try{render(false);}catch(er){}
+   avNext();}
  function avRenderCard(r){ var c=$('av-card'); if(!c)return;
+   if(AVQ.mode==='own'){avOwnCard(r);return;}
    var lv=avLevel(r),g=avGet(r.h),green=AVQ.mode==='green',tot=AVQ.list.length;
    var rs=avReasons(r); if(green)rs=rs.slice(0,1);
    var poz=(lv==='poz'), nogps=(r.la==null||r.lo==null);
@@ -1421,6 +1512,75 @@ try{(function(){
  function avLinks(any){ var h=String(any||'').replace(/^adrvl:/,'').replace(/^adr:/,'');
    var r=AVROW[h]; if(!r)return null; var k=avKatAny(r);
    return {u:r.u, kat:k.u, katEx:!!k.ex, katT:k.t, n:r.n};}
+ // ——— ✅ Ověřený seznam: co Evička doklikala (nemovitost + odkazy + vlastník + trvalá adresa) ———
+ function avHotList(){ avSync();
+   return avRows().filter(function(r){var g=avAny(r.h);return !!(g&&g.hot);})
+     .map(function(r){return {r:r,vl:avVaultGet(r.h)||{}};})
+     .sort(function(a,b){return (b.vl.ts||0)-(a.vl.ts||0);});}
+ function avHotRows(){ return avHotList().map(function(x){var k=avKatAny(x.r);
+   return {n:x.r.n, ob:x.r.ob, ok:x.r.ok, c:x.r.c||'', a:x.r.a||'', p:x.r.p||'',
+     jm:x.vl.jm||'', ad:x.vl.ad||'', od:x.vl.od||'', u:x.r.u, kat:k.u, katEx:k.ex,
+     dt:x.vl.ts?avFmtDate(x.vl.ts):'', h:String(x.r.h)};});}
+ function avHotPaint(){ var el=$('av_hot'); if(!el)return;
+   var L=avHotRows();
+   if(!L.length){el.style.display='none';el.innerHTML='';return;}
+   var rows=L.map(function(x,i){return '<tr data-hh="'+e(x.h)+'"><td>'+(i+1)+'</td>'
+     +'<td><b>'+e(x.n)+'</b><br><span class="av-hsub">'+e(x.ob)+' · okres '+e(x.ok)+(x.c?' · '+e(kc(x.c)):'')+'</span>'
+     +'<div class="av-go sm"><a class="av-gobtn inz" href="'+e(x.u)+'" target="_blank" rel="noopener">🏠 Inzerát ↗</a>'
+     +'<a class="av-gobtn kat'+(x.katEx?'':' vague')+'" href="'+e(x.kat)+'" target="_blank" rel="noopener">🔗 Katastr ↗</a>'
+     +(x.od?'<a class="av-gobtn sv" href="'+e(x.od)+'" target="_blank" rel="noopener">🔗 můj odkaz ↗</a>':'')+'</div></td>'
+     +'<td><b>'+e(x.jm||'—')+'</b></td>'
+     +'<td>'+e(x.ad?avFmtPsc(x.ad):'⚠️ trvalá adresa chybí')+'</td>'
+     +'<td class="av-hsub">'+e(x.a?avFmtPsc(x.a):'—')+'</td>'
+     +'<td class="av-hsub">'+e(x.dt)+'</td>'
+     +'<td><button class="av-hbtn" data-hedit="'+e(x.h)+'" title="Otevřít a upravit">✏️</button>'
+     +'<button class="av-hbtn" data-hback="'+e(x.h)+'" title="Vrátit zpět do výběru">↩</button></td></tr>';}).join('');
+   el.innerHTML='<details class="av-hotbox" id="av_hotbox"'+(AVHOTOPEN?' open':'')+'>'
+     +'<summary>✅ Ověřený seznam — hotovo <b>'+L.length+'</b> (nemovitost · vlastník · trvalá adresa)</summary>'
+     +'<div class="av-hotacts"><button class="av-lnk av-dop" id="av_h_csv">⬇ Stáhnout CSV</button>'
+     +'<button class="av-lnk" id="av_h_copy">📋 Zkopírovat seznam</button>'
+     +'<button class="av-lnk" id="av_h_mail">✉️ Poslat Františkovi</button>'
+     +'<button class="av-lnk" id="av_h_dop">📮 Všechny do fronty dopisů</button>'
+     +'<span class="av-hnote">Jména a adresy jsou jen v tomhle prohlížeči — ven je dostaneš těmihle tlačítky.</span></div>'
+     +'<div class="av-hotwrap"><table class="av-hottbl"><thead><tr><th>#</th><th>Nemovitost</th><th>Vlastník</th>'
+     +'<th>Trvalá adresa (pro dopis)</th><th>Adresa nemovitosti</th><th>Hotovo</th><th></th></tr></thead>'
+     +'<tbody>'+rows+'</tbody></table></div></details>';
+   el.style.display='';
+   var bx=$('av_hotbox'); if(bx)bx.addEventListener('toggle',function(){AVHOTOPEN=bx.open;});
+   el.querySelectorAll('[data-hedit]').forEach(function(b){b.addEventListener('click',function(){
+     var hh=b.getAttribute('data-hedit'); AVQ={mode:'own',list:[hh],i:0}; AVUNDO=[]; AVS=null;
+     avEnsureModal(); avModalEl.classList.add('open'); avShow();});});
+   el.querySelectorAll('[data-hback]').forEach(function(b){b.addEventListener('click',function(){
+     var hh=b.getAttribute('data-hback');
+     if(!confirm('Vrátit zpět do výběru? Jméno a adresa zůstanou uložené.'))return;
+     avFlag(hh,'hot',0); avToast('↩ vráceno do výběru'); avBarPaint(); try{render(false);}catch(er){}});});
+   var cs=$('av_h_csv'); if(cs)cs.addEventListener('click',avHotCsv);
+   var cp=$('av_h_copy'); if(cp)cp.addEventListener('click',function(){avHotCopy(false);});
+   var ml=$('av_h_mail'); if(ml)ml.addEventListener('click',function(){avHotCopy(true);});
+   var dp=$('av_h_dop'); if(dp)dp.addEventListener('click',avHotToDopisy);}
+ function avHotCsv(){ var L=avHotRows(); if(!L.length)return;
+   var H=['Nemovitost','Obec','Okres','Cena Kč','Jméno vlastníka','Trvalá adresa vlastníka',
+          'Adresa nemovitosti','Parcela','Odkaz na inzerát','Odkaz do katastru','Můj odkaz','Hotovo'];
+   var rows=L.map(function(x){return [x.n,x.ob,x.ok,x.c,x.jm,avFmtPsc(x.ad),avFmtPsc(x.a),x.p,x.u,x.kat,x.od,x.dt];});
+   var txt='﻿'+[H].concat(rows).map(function(a){return a.map(function(v){v=String(v==null?'':v);
+     return /[";\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}).join(';');}).join('\r\n');
+   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv;charset=utf-8'}));
+   a.download='overeny_seznam_vlastniku.csv';document.body.appendChild(a);a.click();
+   setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},800);
+   avToast('⬇ staženo '+L.length+' řádků');}
+ function avHotText(){ var L=avHotRows();
+   return 'Ověřený seznam — '+L.length+' nemovitostí\n\n'+L.map(function(x,i){
+     return (i+1)+'. '+x.n+' · '+x.ob+'\n   vlastník: '+(x.jm||'—')+'\n   trvalá adresa: '+(x.ad?avFmtPsc(x.ad):'⚠️ CHYBÍ')
+       +'\n   inzerát: '+x.u+'\n   katastr: '+x.kat+(x.od?'\n   odkaz: '+x.od:'');}).join('\n\n');}
+ function avHotCopy(mail){ var t=avHotText();
+   if(mail){ var b=t.length>1700?(t.slice(0,1700)+'\n\n… zbytek posílám v CSV (tlačítko ⬇ v kokpitu).'):t;
+     location.href='mailto:frantisekdron@gmail.com?subject='+encodeURIComponent('Ověřený seznam vlastníků')+'&body='+encodeURIComponent(b);
+     avToast('✉️ otevřel se e-mail'+(t.length>1700?' — dlouhý seznam radši pošli jako CSV':'')); return; }
+   function ok(){avToast('📋 seznam zkopírován');}
+   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,ok); else ok();}
+ function avHotToDopisy(){ var L=avHotList(),n=0;
+   L.forEach(function(x){ var g=avAny(x.r.h); if(g&&g.vd)return; avOwnerToDopis(x.r); n++; });
+   avToast(n?('📮 přidáno '+n+' do fronty dopisů'):'Všechny už ve frontě jsou.');}
  function avVaultBar(){ var bar=$('av_bar'); if(!bar)return;
    var old=bar.querySelector('.av-vault-bar'); if(old)old.parentNode.removeChild(old);
    var n=avVaultCount(); if(!n)return;
@@ -1454,6 +1614,7 @@ try{(function(){
    var inForm=((tag==='INPUT'&&t.type!=='radio'&&t.type!=='checkbox')||tag==='TEXTAREA'||tag==='SELECT'||(t&&t.isContentEditable));
    var k=ev.key,stop=true;
    if(k==='Escape')avClose();
+   else if(AVQ.mode==='own'){ if(k==='Enter'&&AVS&&AVS.r)avOwnSave(AVS.r); else return; }
    else if(inForm){ if(k==='Enter'&&t.id==='av-man')avDo('fix'); else return; }
    else if(k==='1'||k==='Enter')avDo('ok');
    else if(k==='2')avDo('fix');
