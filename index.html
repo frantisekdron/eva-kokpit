@@ -319,6 +319,7 @@ body.dark .ctrlsec{border-color:#24364f} body.dark .ctrllab{color:#eaf1fa} body.
 .vchip .vn{font-weight:800;background:#f0f4f8;border-radius:10px;padding:1px 7px;font-size:11px;color:#0c2749}
 .vchip.active .vn{background:rgba(255,255,255,.2);color:#fff}
 .reqcard.vhotovo{border-left-color:#2e8b57}.reqcard.vvyr{border-left-color:#dc1c2e;opacity:.82}
+.mchips{display:flex;flex-wrap:wrap;gap:6px}.mch{display:inline-flex;align-items:center;gap:5px;border:1px solid #d5dce6;border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;background:#fff;user-select:none}.mch input{margin:0;accent-color:#173c66}.mch:has(input:checked){background:#173c66;color:#fff;border-color:#173c66}.mch.solo{border-radius:9px}.rf label small{font-weight:400;opacity:.65}body.dark .mch{background:#13233a;border-color:#2a3a52;color:#eaf1fa}
 #pwgate{position:fixed;inset:0;z-index:9999;background:linear-gradient(120deg,#0c2749,#173c66);display:flex;align-items:center;justify-content:center;padding:20px}
 .pwbox{background:#fff;border-radius:16px;padding:30px 32px;max-width:370px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.45)}
 .pwbox h2{font-size:19px;color:#0c2749;margin-bottom:4px}.pwbox p{font-size:12.5px;color:#6a7686;margin-bottom:16px}
@@ -697,12 +698,13 @@ body.dark .av-vault-bar{color:#9fb2c8;border-color:#24364f}
 <button class="reqadd" type="submit">➕ Přidat z odkazu</button></form>
 <form class="reqcardf paramf" id="reqformB"><div class="rfh gold">🧭 Nemám odkaz — vyberu parametry</div>
 <div class="rg2">
-<div class="rf"><label>Typ nemovitosti</label><select id="b_typ" data-other="b_typ_j"><option>Byt</option><option>Rodinný dům</option><option>Pozemek</option><option>Komerční</option><option>Chata / rekreační</option><option value="__jine">✏️ Jiné…</option></select><input id="b_typ_j" class="otherin" placeholder="Vypiš jiný typ…" hidden></div>
+<div class="rf"><label>Typ nemovitosti <small>(i víc najednou)</small></label><div class="mchips" id="b_typ"><label class="mch"><input type="checkbox" value="Byt"><span>Byt</span></label><label class="mch"><input type="checkbox" value="Rodinný dům"><span>Rodinný dům</span></label><label class="mch"><input type="checkbox" value="Pozemek"><span>Pozemek</span></label><label class="mch"><input type="checkbox" value="Komerční"><span>Komerční</span></label><label class="mch"><input type="checkbox" value="Chata / rekreační"><span>Chata / rekreační</span></label><label class="mch"><input type="checkbox" value="__jine" data-other="b_typ_j"><span>✏️ Jiné…</span></label></div><input id="b_typ_j" class="otherin" placeholder="Vypiš jiný typ…" hidden></div>
 <div class="rf"><label>Dispozice</label><select id="b_disp" data-other="b_disp_j"><option value="">— nerozhoduje —</option><option>1+kk / 1+1</option><option>2+kk / 2+1</option><option>3+kk / 3+1</option><option>4+kk / 4+1</option><option>5+kk a větší</option><option value="__jine">✏️ Jiné…</option></select><input id="b_disp_j" class="otherin" placeholder="Vypiš dispozici…" hidden></div>
-<div class="rf"><label>Kraj</label><select id="b_kraj"><option value="">— nerozhoduje —</option><option>Praha</option><option>Středočeský</option><option>Jihočeský</option><option>Plzeňský</option><option>Karlovarský</option><option>Ústecký</option><option>Liberecký</option><option>Královéhradecký</option><option>Pardubický</option><option>Vysočina</option><option>Jihomoravský</option><option>Olomoucký</option><option>Zlínský</option><option>Moravskoslezský</option></select></div>
+<div class="rf"><label>Kraj <small>(i víc najednou, nic = nerozhoduje)</small></label><div class="mchips" id="b_kraj"><label class="mch"><input type="checkbox" value="Praha"><span>Praha</span></label><label class="mch"><input type="checkbox" value="Středočeský"><span>Středočeský</span></label><label class="mch"><input type="checkbox" value="Jihočeský"><span>Jihočeský</span></label><label class="mch"><input type="checkbox" value="Plzeňský"><span>Plzeňský</span></label><label class="mch"><input type="checkbox" value="Karlovarský"><span>Karlovarský</span></label><label class="mch"><input type="checkbox" value="Ústecký"><span>Ústecký</span></label><label class="mch"><input type="checkbox" value="Liberecký"><span>Liberecký</span></label><label class="mch"><input type="checkbox" value="Královéhradecký"><span>Královéhradecký</span></label><label class="mch"><input type="checkbox" value="Pardubický"><span>Pardubický</span></label><label class="mch"><input type="checkbox" value="Vysočina"><span>Vysočina</span></label><label class="mch"><input type="checkbox" value="Jihomoravský"><span>Jihomoravský</span></label><label class="mch"><input type="checkbox" value="Olomoucký"><span>Olomoucký</span></label><label class="mch"><input type="checkbox" value="Zlínský"><span>Zlínský</span></label><label class="mch"><input type="checkbox" value="Moravskoslezský"><span>Moravskoslezský</span></label></div></div>
 <div class="rf"><label>Město / oblast</label><input id="b_obec" placeholder="např. Kladno a okolí"></div>
 <div class="rf"><label>Cena do</label><select id="b_cena"><option value="">— nerozhoduje —</option><option>do 3 mil.</option><option>do 5 mil.</option><option>do 8 mil.</option><option>do 12 mil.</option><option>do 20 mil.</option><option>nad 20 mil.</option></select></div>
-<div class="rf"><label>Zdroj</label><select id="b_zdroj" data-other="b_zdroj_j"><option value="">— libovolný —</option><option>Sreality</option><option>Bazoš</option><option>Annonce</option><option>Facebook</option><option>Doporučení</option><option value="__jine">✏️ Jiné…</option></select><input id="b_zdroj_j" class="otherin" placeholder="Vypiš zdroj…" hidden></div>
+<div class="rf"><label>Zdroj <small>(nic = libovolný)</small></label><div class="mchips" id="b_zdroj"><label class="mch"><input type="checkbox" value="Sreality"><span>Sreality</span></label><label class="mch"><input type="checkbox" value="Bazoš"><span>Bazoš</span></label><label class="mch"><input type="checkbox" value="Bezrealitky"><span>Bezrealitky</span></label><label class="mch"><input type="checkbox" value="Annonce"><span>Annonce</span></label><label class="mch"><input type="checkbox" value="Facebook"><span>Facebook</span></label><label class="mch"><input type="checkbox" value="Doporučení"><span>Doporučení</span></label><label class="mch"><input type="checkbox" value="__jine" data-other="b_zdroj_j"><span>✏️ Jiné…</span></label></div><input id="b_zdroj_j" class="otherin" placeholder="Vypiš zdroj…" hidden></div>
+<div class="rf"><label class="mch solo"><input type="checkbox" id="b_adr" checked><span>📍 Jen s dohledatelnou adresou</span></label></div>
 <div class="rf"><label>Priorita</label><select id="b_prio"><option value="stredni">🙂 Střední</option><option value="vysoka">🔥 Vysoká</option><option value="nizka">🌱 Nízká</option></select></div>
 <div class="rf full"><label>Poznámka (nepovinné)</label><textarea id="b_note" placeholder="Cokoliv navíc — konkrétní ulice, spěchá, znám majitele…"></textarea></div>
 </div>
@@ -2487,7 +2489,15 @@ var STAGES=[{"k": "zkontrolovat", "l": "Zkontrolovat vizu", "c": "#e0a020"}, {"k
  function otherSel(id){var e=document.getElementById(id);if(!e)return;
    e.addEventListener('change',function(){var o=document.getElementById(e.getAttribute('data-other'));
      if(o){o.hidden=(e.value!=='__jine');if(!o.hidden)o.focus();}});}
- ['b_typ','b_disp','b_zdroj'].forEach(otherSel);
+ ['b_disp'].forEach(otherSel);
+ // VÍCENÁSOBNÝ VÝBĚR (27. 10. 2026, Eva chtěla víc krajů a typů v jednom požadavku)
+ function mval(id){var w=document.getElementById(id);if(!w)return'';var out=[];
+   w.querySelectorAll('input:checked').forEach(function(c){
+     if(c.value==='__jine'){var o=document.getElementById(c.getAttribute('data-other'));if(o&&o.value.trim())out.push(o.value.trim());}
+     else out.push(c.value);});
+   return out.join(', ');}
+ document.querySelectorAll('.mchips input[data-other]').forEach(function(c){c.addEventListener('change',function(){
+   var o=document.getElementById(c.getAttribute('data-other'));if(o){o.hidden=!c.checked;if(c.checked)o.focus();}});});
  function selVal(id){var e=document.getElementById(id);if(!e)return'';
    if(e.value==='__jine'){var o=document.getElementById(e.getAttribute('data-other'));return (o&&o.value.trim())||'jiné';}
    return e.value;}
@@ -2507,7 +2517,7 @@ var STAGES=[{"k": "zkontrolovat", "l": "Zkontrolovat vizu", "c": "#e0a020"}, {"k
      var h='<button class="rdel" title="Smazat">×</button>'+mode;
      if(q.mode==='link'){h+='<div class="rn">Nemovitost z odkazu</div><div class="rlink"><a href="'+escj(q.url)+'" target="_blank" rel="noopener">'+escj(q.url)+'</a></div>';}
      else{h+='<div class="rn">'+escj([q.typ,q.disp].filter(Boolean).join(' · ')||'Nemovitost')+'</div>';
-       h+='<div class="rm">'+escj([[q.kraj,q.obec].filter(Boolean).join(' / '),q.cena,q.zdroj].filter(Boolean).join(' · '))+'</div>';}
+       h+='<div class="rm">'+escj([[q.kraj,q.obec].filter(Boolean).join(' / '),q.cena,q.zdroj,q.adresa?'jen s adresou':''].filter(Boolean).join(' · '))+'</div>';}
      if(q.note)h+='<div class="rnote">'+escj(q.note)+'</div>';
      h+='<span class="rprio '+(q.prio||'stredni')+'">'+plab+'</span>';
      d.innerHTML=h;
@@ -2520,13 +2530,13 @@ var STAGES=[{"k": "zkontrolovat", "l": "Zkontrolovat vizu", "c": "#e0a020"}, {"k
    save();this.reset();renderReqs();udalost('naber','odkaz: '+url);});
  document.getElementById('reqformB').addEventListener('submit',function(e){e.preventDefault();
    state.__requests.push({id:'r'+Date.now()+Math.round(Math.random()*999),mode:'param',
-     typ:selVal('b_typ'),disp:selVal('b_disp'),kraj:document.getElementById('b_kraj').value,
+     typ:mval('b_typ'),disp:selVal('b_disp'),kraj:mval('b_kraj'),
      obec:document.getElementById('b_obec').value.trim(),cena:document.getElementById('b_cena').value,
-     zdroj:selVal('b_zdroj'),prio:document.getElementById('b_prio').value,
+     zdroj:mval('b_zdroj'),adresa:!!(document.getElementById('b_adr')||{}).checked,prio:document.getElementById('b_prio').value,
      note:document.getElementById('b_note').value.trim(),ts:Date.now()});
    var _q=state.__requests[state.__requests.length-1];
    save();this.reset();
-   ['b_typ_j','b_disp_j','b_zdroj_j'].forEach(function(id){document.getElementById(id).hidden=true;});
+   ['b_typ_j','b_disp_j','b_zdroj_j'].forEach(function(id){var e=document.getElementById(id);if(e)e.hidden=true;});
    renderReqs();udalost('naber','parametry: '+[_q.typ,_q.disp,_q.kraj,_q.obec,_q.cena].filter(Boolean).join(' / '));});
  function reqText(){var rs=state.__requests||[];
    return 'Evičky seznam náběrů ('+new Date().toLocaleDateString('cs-CZ')+'):\n\n'+rs.map(function(q,i){return reqLine(q,i+1);}).join('\n');}
